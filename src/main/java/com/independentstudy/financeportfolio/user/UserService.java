@@ -1,11 +1,8 @@
 package com.independentstudy.financeportfolio.user;
 
-import com.independentstudy.financeportfolio.portfolio.Portfolio;
-import com.independentstudy.financeportfolio.portfolio.PortfolioService;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,13 +12,18 @@ import java.util.Optional;
 public class UserService
 {
     private final UserRepository userRepository;
-    private final PortfolioService portfolioService;
 
+    public User getUser(String username)
+    {
+        Optional<User> optionalUser = userRepository.findById(username);
+        if (optionalUser.isPresent())
+            return optionalUser.get();
+        else
+            throw new IllegalStateException("user with username " + username + " was not found");
+    }
     public void addUser(User user)
     {
         userRepository.save(user);
-        Portfolio portfolio = new Portfolio(user.getUsername());
-        portfolioService.createNewPortfolio(portfolio);
     }
 
     public boolean userExists(String username)

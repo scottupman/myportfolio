@@ -1,12 +1,30 @@
-CREATE TABLE positions
+CREATE TABLE assets
 (
-    id SERIAL PRIMARY KEY,
-    portfolio_id INTEGER REFERENCES portfolio NOT NULL,
-    name TEXT,
+    username TEXT,
     symbol TEXT,
-    current_price NUMERIC,
-    price_bought NUMERIC,
+    name TEXT,
+    type TEXT,
     quantity INTEGER,
-    profit_loss NUMERIC,
-    is_crypto BOOLEAN
+    PRIMARY KEY(username, symbol),
+    FOREIGN KEY(username) REFERENCES users(username)
+);
+
+CREATE TABLE trades
+(
+    trade_id SERIAL,
+    symbol TEXT,
+    name TEXT,
+    type TEXT,
+    quantity INTEGER,
+    price NUMERIC,
+    date_of_trade TIMESTAMP
 )
+
+quantity(buys(asset)):
+SELECT SUM(quantity) FROM trades WHERE type = "Buy" GROUP BY username, symbol
+
+quantity(sells(asset)):
+SELECT SUM(quantity) FROM trades WHERE type = "Sell" GROUP BY username, symbol
+
+quantity(asset):
+quantity(buys(asset)) - quantity(sells(asset))

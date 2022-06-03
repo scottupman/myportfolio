@@ -11,6 +11,20 @@ public class UserController
 {
     private final UserService userService;
 
+    @GetMapping("{username}")
+    public ResponseEntity getUser(@PathVariable String username)
+    {
+        try
+        {
+            User user = userService.getUser(username);
+            return ResponseEntity.ok(user);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
     @PutMapping
     public ResponseEntity login(@RequestBody User user)
     {

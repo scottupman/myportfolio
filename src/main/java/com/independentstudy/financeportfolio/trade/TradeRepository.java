@@ -19,4 +19,6 @@ public interface TradeRepository extends JpaRepository<Trade, Integer>
             ") sub\n" +
             "GROUP BY symbol;", nativeQuery = true)
     List<ProfitLossOnAssets> findProfitLossByUsername(String username);
+
+    List<Trade> findTradesByUsername(String username);
 }

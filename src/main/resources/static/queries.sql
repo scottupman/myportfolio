@@ -18,18 +18,19 @@ CREATE TABLE trades
     type TEXT,
     quantity INTEGER,
     price NUMERIC,
-    date_of_trade TIMESTAMPTZ
+    date_of_trade TIMESTAMP
 )
-SELECT symbol, SUM(value) AS profit
-FROM (
-    SELECT symbol, type, CASE
-        WHEN type='Buy' THEN -SUM(price * quantity)
-        WHEN type='Sell' THEN SUM(price * quantity)
-    END AS value
-    FROM trades
-    GROUP BY username, symbol, type
-) sub
-GROUP BY username, symbol;
+"SELECT symbol, SUM(value) AS profit\n" +
+            "FROM (\n" +
+            "    SELECT symbol, type, CASE\n" +
+            "        WHEN type='Buy' THEN -SUM(price * quantity)\n" +
+            "        WHEN type='Sell' THEN SUM(price * quantity)\n" +
+            "    END AS value\n" +
+            "    FROM trades\n" +
+            "    WHERE username = ?1\n" +
+            "    GROUP BY symbol, type\n" +
+            ") sub\n" +
+            "GROUP BY symbol;",
 
 
 INSERT INTO trades VALUES(1, 'justinwustin200', 'AAPL', 'Apple Inc.', 'Buy', 2, 100.00, '2022-06-08 09:30:30 America/New_York');

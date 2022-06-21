@@ -2,7 +2,9 @@ package com.independentstudy.financeportfolio.user;
 
 import lombok.Data;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -50,5 +52,11 @@ public class UserService
                 return true;
         }
         return false;
+    }
+    @Transactional
+    public void modifyCashValue(String username, BigDecimal value)
+    {
+        User user = getUser(username);
+        user.setCashValue(user.getCashValue().add(value));
     }
 }

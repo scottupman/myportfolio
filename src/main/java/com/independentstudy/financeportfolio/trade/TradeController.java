@@ -1,11 +1,9 @@
 package com.independentstudy.financeportfolio.trade;
 
+import com.independentstudy.financeportfolio.exceptions.SellNonExistentAssetException;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,6 +15,21 @@ public class TradeController
     private final TradeService tradeService;
 
     @GetMapping("{username}")
+    public ResponseEntity<Object> getTrades(@PathVariable String username)
+    {
+        try
+        {
+            List<Trade> trades = tradeService.getTrades(username);
+            return ResponseEntity.ok(trades);
+        }
+        catch(Exception e)
+        {
+            System.out.println("couldn't query trades for user " + username);
+            return null;
+        }
+    }
+
+    @GetMapping("/profit/{username}")
     public ResponseEntity<Object> getProfitLoss(@PathVariable String username)
     {
         try
@@ -26,6 +39,21 @@ public class TradeController
         }
         catch(Exception e){
             System.out.println("couldn't query profit/loss for user's " + username + " assets");
+            return null;
+        }
+    }
+
+    @PostMapping()
+    public ResponseEntity<Object> storeTrade(@RequestBody Trade trade)
+    {
+        try
+        {
+            tradeService.storeTrade(trade);
+            return ResponseEntity.ok("Trade successful!");
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
             return null;
         }
     }

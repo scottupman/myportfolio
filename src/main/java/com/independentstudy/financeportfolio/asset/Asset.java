@@ -1,6 +1,9 @@
 package com.independentstudy.financeportfolio.asset;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,14 +18,28 @@ class AssetId implements Serializable
 }
 @Entity
 @Table(name = "assets")
-@Data
+@Getter
+@Setter
+@ToString
 @IdClass(AssetId.class)
 public class Asset
 {
-    @Id String username;
-    @Id String symbol;
+    @Id private String username;
+    @Id private String symbol;
 
     private String name;
     private String type;
-    private Integer quantity;
+    private double quantity;
+
+    public Asset()
+    {
+
+    }
+    public Asset(String username, String symbol, String name, String type, double quantity) {
+        this.username = username;
+        this.symbol = symbol;
+        this.name = name;
+        this.type = type;
+        this.quantity = quantity;
+    }
 }

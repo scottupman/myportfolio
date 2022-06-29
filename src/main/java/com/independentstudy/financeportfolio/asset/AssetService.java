@@ -36,7 +36,14 @@ public class AssetService
         return assetRepository.findSymbolByUsername(username);
     }
 
-    public double getQuantity(String username, String symbol) { return assetRepository.findQuantityByUsernameAndSymbol(username, symbol);}
+    public Double getQuantity(String username, String symbol)
+    {
+        Double quantity = assetRepository.findQuantityByUsernameAndSymbol(username, symbol);
+        if (quantity == null)
+            quantity = 0.0;
+
+        return quantity;
+    }
 
     @Transactional
     public void modifyQuantity(Asset asset, double quantity)

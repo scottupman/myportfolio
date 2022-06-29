@@ -2,6 +2,8 @@ package com.independentstudy.financeportfolio.trade;
 
 import com.independentstudy.financeportfolio.asset.Asset;
 import com.independentstudy.financeportfolio.asset.AssetService;
+import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
+import com.independentstudy.financeportfolio.exceptions.NotEnoughQuantityException;
 import com.independentstudy.financeportfolio.exceptions.SellNonExistentAssetException;
 import com.independentstudy.financeportfolio.user.UserService;
 import lombok.Data;
@@ -23,20 +25,31 @@ public class TradeService
         return tradeRepository.findProfitLossByUsername(username);
     }
 
-    public void storeTrade(Trade trade) throws SellNonExistentAssetException {
+    public void storeTrade(Trade trade) throws SellNonExistentAssetException, NotEnoughBuyingPowerException, NotEnoughQuantityException {
         Asset asset = assetService.getAsset(trade.getUsername(), trade.getSymbol());
         if (asset == null)
         {
-            if (trade.getType().equalsIgnoreCase("sell"))
-                throw new SellNonExistentAssetException("can't sell asset " + trade.getSymbol() + " since that user doesn't own it");
             String username = trade.getUsername();
             String symbol = trade.getSymbol();
             String name = trade.getName();
             String type = trade.getSecurityType();
             double quantity = trade.getQuantity();
+            BigDecimal price = trade.getPrice();
+            BigDecimal totalPrice = price.multiply(new BigDecimal(quantity));
+            BigDecimal buyingPower = userService.getUser(username).getCashValue();
+
+            if (trade.getType().equalsIgnoreCase("sell"))
+                throw new SellNonExistentAssetException("Can't sell an asset that you don't own");
+            else if (trade.getType().equalsIgnoreCase("buy")) {
+                int res = buyingPower.compareTo(totalPrice);
+                if (res == -1)
+                    throw new NotEnoughBuyingPowerException("Not enough buying power");
+            }
+
             Asset newAsset = new Asset(username, symbol, name, type, quantity);
             tradeRepository.save(trade);
             assetService.storeAsset(newAsset);
+            userService.modifyCashValue(username, totalPrice.negate());
         }
         else
         {
@@ -50,7 +63,7 @@ public class TradeService
             {
                 int res = buyingPower.compareTo(totalPrice);
                 if (res == -1)
-                    throw new ArithmeticException("Not enough buying power");
+                    throw new NotEnoughBuyingPowerException("Not enough buying power");
 
                 tradeRepository.save(trade);
                 assetService.modifyQuantity(asset, quantity);
@@ -60,7 +73,7 @@ public class TradeService
             else if (trade.getType().equalsIgnoreCase("sell"))
             {
                 if (asset.getQuantity() < trade.getQuantity())
-                    throw new ArithmeticException("User only owns " + asset.getQuantity() + " of " + asset.getSymbol());
+                    throw new NotEnoughQuantityException("You only own " + asset.getQuantity() + " of " + asset.getSymbol());
 
                 tradeRepository.save(trade);
                 assetService.modifyQuantity(asset, -quantity);

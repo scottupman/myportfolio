@@ -59,4 +59,9 @@ public class UserService
         User user = getUser(username);
         user.setCashValue(user.getCashValue().add(value));
     }
+
+    public BigDecimal getCashValue(String username)
+    {
+        return userRepository.findCashValueByUsername(username);
+    }
 }

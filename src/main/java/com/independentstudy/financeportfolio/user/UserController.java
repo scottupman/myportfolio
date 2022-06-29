@@ -4,6 +4,8 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @RestController
 @RequestMapping("user")
 @Data
@@ -22,8 +24,22 @@ public class UserController
         catch (Exception e)
         {
             System.out.println(e.getMessage());
+            return null;
         }
-        return null;
+    }
+    @GetMapping("{username}/cash")
+    public ResponseEntity getCashValue(@PathVariable String username)
+    {
+        try
+        {
+            BigDecimal cashValue = userService.getCashValue(username);
+            return ResponseEntity.ok(cashValue);
+        }
+        catch (Exception e)
+        {
+            System.out.println(e.getMessage());
+            return null;
+        }
     }
     @PutMapping
     public ResponseEntity login(@RequestBody User user)

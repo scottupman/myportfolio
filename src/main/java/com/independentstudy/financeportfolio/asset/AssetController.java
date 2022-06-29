@@ -26,4 +26,12 @@ public class AssetController
         List<String> symbols = assetService.getSymbols(username);
         return ResponseEntity.ok(symbols);
     }
+
+    @GetMapping("{username}/quantity/{symbol}")
+    public ResponseEntity getQuantity(@PathVariable String username, @PathVariable String symbol)
+    {
+        Double quantity = assetService.getQuantity(username, symbol);
+        return ResponseEntity.ok(quantity);
+    }
+
 }

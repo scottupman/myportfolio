@@ -29,13 +29,13 @@ public class Asset
 
     private String name;
     private String type;
-    private double quantity;
+    private Double quantity;
 
     public Asset()
     {
 
     }
-    public Asset(String username, String symbol, String name, String type, double quantity) {
+    public Asset(String username, String symbol, String name, String type, Double quantity) {
         this.username = username;
         this.symbol = symbol;
         this.name = name;

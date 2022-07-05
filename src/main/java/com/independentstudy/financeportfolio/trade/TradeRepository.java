@@ -20,5 +20,8 @@ public interface TradeRepository extends JpaRepository<Trade, Integer>
             "GROUP BY symbol;", nativeQuery = true)
     List<ProfitLossOnAssets> findProfitLossByUsername(String username);
 
+    @Query(value = "SELECT DISTINCT symbol FROM trades WHERE username = ?1", nativeQuery = true)
+    List<String> getTradedSymbols(String username);
+
     List<Trade> findTradesByUsername(String username);
 }

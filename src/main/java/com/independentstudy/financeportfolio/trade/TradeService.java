@@ -25,6 +25,11 @@ public class TradeService
         return tradeRepository.findProfitLossByUsername(username);
     }
 
+    public List<String> getTradedSymbols(String username)
+    {
+        return tradeRepository.getTradedSymbols(username);
+    }
+
     public void storeTrade(Trade trade) throws SellNonExistentAssetException, NotEnoughBuyingPowerException, NotEnoughQuantityException {
         Asset asset = assetService.getAsset(trade.getUsername(), trade.getSymbol());
         if (asset == null)

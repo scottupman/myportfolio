@@ -1,17 +1,18 @@
 package com.independentstudy.financeportfolio.trade;
 
-import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
-import java.time.ZonedDateTime;
+import java.time.Instant;
 
 @Entity
 @Table(name = "trades")
 @Getter @Setter
+@NoArgsConstructor
 public class Trade
 {
     @Id
@@ -26,9 +27,9 @@ public class Trade
     private String securityType;
     private double quantity;
     private BigDecimal price;
-    private Timestamp dateOfTrade;
+    private long timestamp;
 
-    public Trade(String username, String symbol, String name, String type, String securityType, double quantity, BigDecimal price) {
+    public Trade(String username, String symbol, String name, String type, String securityType, double quantity, BigDecimal price, long timestamp) {
         this.username = username;
         this.symbol = symbol;
         this.name = name;
@@ -36,6 +37,6 @@ public class Trade
         this.securityType = securityType;
         this.quantity = quantity;
         this.price = price;
-        setDateOfTrade(new Timestamp(System.currentTimeMillis()));
+        this.timestamp = timestamp;
     }
 }

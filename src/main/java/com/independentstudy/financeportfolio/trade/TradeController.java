@@ -7,6 +7,7 @@ import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -28,6 +29,13 @@ public class TradeController
     {
         List<ProfitLossOnAssets> profitLossOfAssets = tradeService.getProfitLoss(username);
         return ResponseEntity.ok(profitLossOfAssets);
+    }
+
+    @GetMapping("{username}/symbols")
+    public ResponseEntity getTradedSymbols(@PathVariable String username)
+    {
+        List<String> tradedSymbols = tradeService.getTradedSymbols(username);
+        return ResponseEntity.ok(tradedSymbols);
     }
 
     @PostMapping

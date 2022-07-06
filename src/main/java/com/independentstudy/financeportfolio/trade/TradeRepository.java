@@ -23,5 +23,8 @@ public interface TradeRepository extends JpaRepository<Trade, Integer>
     @Query(value = "SELECT DISTINCT symbol FROM trades WHERE username = ?1", nativeQuery = true)
     List<String> getTradedSymbols(String username);
 
+    @Query(value = "SELECT DISTINCT name FROM trades WHERE symbol = ?1", nativeQuery = true)
+    String getNameOfSymbol(String symbol);
+
     List<Trade> findTradesByUsername(String username);
 }

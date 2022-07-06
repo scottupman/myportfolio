@@ -25,6 +25,11 @@ public class TradeService
         return tradeRepository.findProfitLossByUsername(username);
     }
 
+    public String getNameOfSymbol(String symbol)
+    {
+        return tradeRepository.getNameOfSymbol(symbol);
+    }
+
     public List<String> getTradedSymbols(String username)
     {
         return tradeRepository.getTradedSymbols(username);

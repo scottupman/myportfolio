@@ -31,6 +31,13 @@ public class TradeController
         return ResponseEntity.ok(profitLossOfAssets);
     }
 
+    @GetMapping("name/{symbol}")
+    public ResponseEntity getNameOfSymbol(@PathVariable String symbol)
+    {
+        String name = tradeService.getNameOfSymbol(symbol);
+        return ResponseEntity.ok(name);
+    }
+
     @GetMapping("{username}/symbols")
     public ResponseEntity getTradedSymbols(@PathVariable String username)
     {

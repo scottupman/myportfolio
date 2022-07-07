@@ -1,10 +1,13 @@
 package com.independentstudy.financeportfolio.user;
 
+import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,6 +17,8 @@ import java.util.Optional;
 public class UserService
 {
     private final UserRepository userRepository;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     public User getUser(String username)
     {
@@ -58,6 +63,22 @@ public class UserService
     {
         User user = getUser(username);
         user.setCashValue(user.getCashValue().add(value));
+    }
+
+    @Transactional
+    public void withdraw(String username, BigDecimal value) throws NotEnoughBuyingPowerException
+    {
+        User user = getUser(username);
+        BigDecimal userCash = user.getCashValue();
+
+        // if userCash < value
+        if (userCash.compareTo(value) == -1)
+        {
+            df.setRoundingMode(RoundingMode.DOWN);
+            throw new NotEnoughBuyingPowerException("You only have $" + df.format(userCash));
+        }
+
+        modifyCashValue(username, value.negate());
     }
 
     public BigDecimal getCashValue(String username)

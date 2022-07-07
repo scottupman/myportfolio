@@ -1,10 +1,13 @@
 package com.independentstudy.financeportfolio.user;
 
+import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 @RestController
 @RequestMapping("user")
@@ -12,6 +15,8 @@ import java.math.BigDecimal;
 public class UserController
 {
     private final UserService userService;
+
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
     @GetMapping("{username}")
     public ResponseEntity getUser(@PathVariable String username)
@@ -49,6 +54,25 @@ public class UserController
         else
             return ResponseEntity.badRequest().body("Username or password is invalid");
     }
+
+    @PutMapping("{username}/deposit/{value}")
+    public ResponseEntity deposit(@PathVariable String username, @PathVariable BigDecimal value)
+    {
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        userService.modifyCashValue(username, value);
+        return ResponseEntity.ok("Deposited $" + df.format(value));
+    }
+
+    @PutMapping("{username}/withdraw/{value}")
+    public ResponseEntity withdraw(@PathVariable String username, @PathVariable BigDecimal value) throws NotEnoughBuyingPowerException
+    {
+        df.setRoundingMode(RoundingMode.DOWN);
+
+        userService.withdraw(username, value);
+        return ResponseEntity.ok("Withdrew $" + df.format(value));
+    }
+
     @PostMapping
     public ResponseEntity registerUser(@RequestBody User user)
     {

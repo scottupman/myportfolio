@@ -20,6 +20,16 @@ public class UserService
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
 
+    public List<String> getAllUsers()
+    {
+        return userRepository.getAllUsernames();
+    }
+
+    public List<String> getAllEmails()
+    {
+        return userRepository.getAllEmails();
+    }
+
     public User getUser(String username)
     {
         Optional<User> optionalUser = userRepository.findById(username);

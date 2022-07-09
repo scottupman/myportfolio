@@ -1,5 +1,6 @@
 package com.independentstudy.financeportfolio.user;
 
+import com.independentstudy.financeportfolio.exceptions.InvalidCredentialsException;
 import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
 import lombok.Data;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.List;
 
 @RestController
 @RequestMapping("user")
@@ -17,6 +19,20 @@ public class UserController
     private final UserService userService;
 
     private static final DecimalFormat df = new DecimalFormat("0.00");
+
+    @GetMapping
+    public ResponseEntity getAllUsers()
+    {
+        List<String> allUsers = userService.getAllUsers();
+        return ResponseEntity.ok(allUsers);
+    }
+
+    @GetMapping("/email")
+    public ResponseEntity getAllEmails()
+    {
+        List<String> allEmails = userService.getAllEmails();
+        return ResponseEntity.ok(allEmails);
+    }
 
     @GetMapping("{username}")
     public ResponseEntity getUser(@PathVariable String username)
@@ -47,12 +63,12 @@ public class UserController
         }
     }
     @PutMapping
-    public ResponseEntity login(@RequestBody User user)
+    public ResponseEntity login(@RequestBody User user) throws InvalidCredentialsException
     {
         if (userService.userValid(user.getUsername(), user.getPassword()))
             return ResponseEntity.ok("User " + user.getUsername() + " has logged in");
         else
-            return ResponseEntity.badRequest().body("Username or password is invalid");
+            throw new InvalidCredentialsException("Incorrect username or password");
     }
 
     @PutMapping("{username}/deposit/{value}")

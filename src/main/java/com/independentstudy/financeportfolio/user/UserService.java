@@ -1,5 +1,6 @@
 package com.independentstudy.financeportfolio.user;
 
+import com.independentstudy.financeportfolio.exceptions.EmailAlreadyExistsException;
 import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
 import lombok.Data;
 import org.springframework.stereotype.Service;
@@ -63,7 +64,7 @@ public class UserService
         if (userOptional.isPresent())
         {
             User storedUser = userOptional.get();
-            if (Objects.equals(password, storedUser.getPassword()))
+            if (storedUser.getPassword().equals(password));
                 return true;
         }
         return false;
@@ -89,6 +90,36 @@ public class UserService
         }
 
         modifyCashValue(username, value.negate());
+    }
+
+    @Transactional
+    public void updateFirstName(String username, String fname)
+    {
+        User user = getUser(username);
+        user.setFname(fname);
+    }
+
+    @Transactional
+    public void updateLastName(String username, String lname)
+    {
+        User user = getUser(username);
+        user.setLname(lname);
+    }
+
+    @Transactional
+    public void updateEmail(String username, String email) throws EmailAlreadyExistsException
+    {
+        User user = getUser(username);
+        String currentEmail = user.getEmail();
+
+        if (email.compareToIgnoreCase(currentEmail) == 0) return;
+        else
+        {
+            if (emailExists(email))
+                throw new EmailAlreadyExistsException("Email already exists");
+            else
+                user.setEmail(email);
+        }
     }
 
     public BigDecimal getCashValue(String username)

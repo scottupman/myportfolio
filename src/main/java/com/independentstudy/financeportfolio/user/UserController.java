@@ -1,5 +1,6 @@
 package com.independentstudy.financeportfolio.user;
 
+import com.independentstudy.financeportfolio.exceptions.EmailAlreadyExistsException;
 import com.independentstudy.financeportfolio.exceptions.InvalidCredentialsException;
 import com.independentstudy.financeportfolio.exceptions.NotEnoughBuyingPowerException;
 import lombok.Data;
@@ -69,6 +70,27 @@ public class UserController
             return ResponseEntity.ok("User " + user.getUsername() + " has logged in");
         else
             throw new InvalidCredentialsException("Incorrect username or password");
+    }
+
+    @PutMapping("{username}/fname/{fname}")
+    public ResponseEntity updateFirstName(@PathVariable String username, @PathVariable String fname)
+    {
+        userService.updateFirstName(username, fname);
+        return ResponseEntity.ok("updated first name");
+    }
+
+    @PutMapping("{username}/lname/{lname}")
+    public ResponseEntity updateLastName(@PathVariable String username, @PathVariable String lname)
+    {
+        userService.updateLastName(username, lname);
+        return ResponseEntity.ok("updated last name");
+    }
+
+    @PutMapping("{username}/email/{email}")
+    public ResponseEntity updateEmail(@PathVariable String username, @PathVariable String email) throws EmailAlreadyExistsException
+    {
+        userService.updateEmail(username, email);
+        return ResponseEntity.ok("updated email");
     }
 
     @PutMapping("{username}/deposit/{value}")
